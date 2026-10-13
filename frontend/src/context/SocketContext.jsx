@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { io } from 'socket.io-client';
+import { getApiBaseUrl } from '../api/baseUrl.js';
 import { useAuth } from './AuthContext.jsx';
 
 const SocketContext = createContext(null);
@@ -15,7 +16,7 @@ export function SocketProvider({ children }) {
       return;
     }
 
-    const url = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/$/, '');
+    const url = getApiBaseUrl();
     const s = io(url, { withCredentials: true, transports: ['websocket', 'polling'] });
     if (user.role === 'administrator') {
       s.emit('join', { room: 'admin' });
