@@ -15,7 +15,7 @@ export function SocketProvider({ children }) {
       return;
     }
 
-    const url = import.meta.env.VITE_API_URL || window.location.origin;
+    const url = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/$/, '');
     const s = io(url, { withCredentials: true, transports: ['websocket', 'polling'] });
     if (user.role === 'administrator') {
       s.emit('join', { room: 'admin' });
