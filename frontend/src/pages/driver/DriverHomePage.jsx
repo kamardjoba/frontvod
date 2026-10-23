@@ -124,7 +124,7 @@ export default function DriverHomePage() {
     <div className="driver-page">
       {/* Hero */}
       <div className="driver-hero">
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <div className="driver-hero-top">
           <div>
             <h2>{profile.firstName} {profile.lastName}</h2>
             <div className="driver-hero-sub">{profile.email}</div>
@@ -259,7 +259,7 @@ export default function DriverHomePage() {
                   />
                 </div>
               )}
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <div className="action-row">
                 {passed && showEditEnd ? (
                   <button type="button" className="btn btn-accent" onClick={onContinueRest}>
                     Зберегти новий час

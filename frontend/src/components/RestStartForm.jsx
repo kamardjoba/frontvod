@@ -133,12 +133,12 @@ export default function RestStartForm({ onSubmit, loading, onCancel }) {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div className="action-row">
           <button type="submit" className="btn btn-primary btn-lg" disabled={loading || !city.trim()}>
             {loading ? '⏳ Збереження...' : '✅ Підтвердити стоянку'}
           </button>
           {onCancel && (
-            <button type="button" className="btn btn-secondary" style={{ flexShrink: 0, alignSelf: 'center' }} onClick={onCancel}>
+            <button type="button" className="btn btn-secondary btn-lg" onClick={onCancel}>
               Скасувати
             </button>
           )}

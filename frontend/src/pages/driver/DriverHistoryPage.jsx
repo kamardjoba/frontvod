@@ -3,6 +3,16 @@ import { Link } from 'react-router-dom';
 import { api } from '../../api/client.js';
 import { formatLong } from '../../utils/time.js';
 
+function restTypeLabel(type) {
+  const map = {
+    daily: 'Щоденний відпочинок',
+    weekly_reduced_24h: 'Скорочений тижневий — 24 год',
+    weekly_full_45h: 'Повний тижневий — 45 год',
+    custom: 'Інший період',
+  };
+  return map[type] || type;
+}
+
 export default function DriverHistoryPage() {
   const [items, setItems] = useState([]);
 
@@ -11,24 +21,37 @@ export default function DriverHistoryPage() {
   }, []);
 
   return (
-    <div>
-      <Link to="/driver" className="btn btn-secondary" style={{ marginBottom: 12, display: 'inline-block' }}>
-        ← На главную
+    <div className="driver-page">
+      <Link to="/driver" className="back-link">
+        ← На головну
       </Link>
       <div className="card">
-        <h2>История отдыха</h2>
-        {items.length === 0 && <p className="meta-line">Записей пока нет.</p>}
+        <div className="card-header">
+          <h1 className="card-title">Історія стоянок</h1>
+          <span className="meta-line">{items.length} записів</span>
+        </div>
+        {items.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-state-icon">📋</div>
+            <div className="empty-state-text">Записів поки немає</div>
+          </div>
+        )}
         {items.map((item) => (
-          <div key={item.id} style={{ borderTop: '1px solid #e2e8f0', padding: '12px 0' }}>
-            <strong>{formatLong(item.startedAt)}</strong>
-            <div className="meta-line">Тип: {item.restType}</div>
-            <div className="meta-line">Первоначальное окончание: {formatLong(item.initialPlannedEndAt)}</div>
-            <div className="meta-line">Последнее планируемое окончание: {formatLong(item.currentPlannedEndAt)}</div>
-            <div className="meta-line">
-              Фактическая доступность: {item.actualAvailabilityAt ? formatLong(item.actualAvailabilityAt) : '—'}
+          <div key={item.id} className="history-item">
+            <div className="history-item-header">
+              <strong>{formatLong(item.startedAt)}</strong>
             </div>
-            <div className="meta-line">Источник изменений: {item.lastUpdatedBy}</div>
-            {item.driverComment && <div className="meta-line">Комментарий: {item.driverComment}</div>}
+            <div className="history-meta">
+              <div><span>Тип</span><strong>{restTypeLabel(item.restType)}</strong></div>
+              <div><span>Плановий вихід</span><strong>{formatLong(item.currentPlannedEndAt)}</strong></div>
+              <div>
+                <span>Факт</span>
+                <strong>{item.actualAvailabilityAt ? formatLong(item.actualAvailabilityAt) : '—'}</strong>
+              </div>
+              {item.driverComment && (
+                <div><span>Коментар</span><strong>{item.driverComment}</strong></div>
+              )}
+            </div>
           </div>
         ))}
       </div>

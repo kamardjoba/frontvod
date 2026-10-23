@@ -236,7 +236,7 @@ export default function AdminDriverProfilePage() {
             ) : (
               data.auditLogs.map((log) => (
                 <div key={log.id} style={{ padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="audit-row">
                     <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>{actionLabel(log.action)}</span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{formatShort(log.created_at)}</span>
                   </div>

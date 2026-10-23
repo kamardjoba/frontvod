@@ -31,7 +31,7 @@ export default function AdminCreateDriverPage() {
   };
 
   return (
-    <div style={{ maxWidth: 540 }}>
+    <div className="form-page">
       <Link to="/admin" className="back-link">
         ← До панелі
       </Link>

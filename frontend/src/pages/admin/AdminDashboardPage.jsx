@@ -93,31 +93,28 @@ export default function AdminDashboardPage() {
 
       {/* Filters bar */}
       <div className="filters-bar">
-        {/* Search */}
         <input
-          className="input"
-          style={{ maxWidth: 240, marginRight: 4 }}
+          className="input filters-search"
           placeholder="🔍 Пошук водія..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* Status filter buttons */}
-        {FILTERS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            className={`btn ${statusFilter === f.key ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setStatusFilter(f.key)}
-          >
-            {f.icon} {f.label}
-          </button>
-        ))}
+        <div className="filters-chips">
+          {FILTERS.map((f) => (
+            <button
+              key={f.key}
+              type="button"
+              className={`btn ${statusFilter === f.key ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setStatusFilter(f.key)}
+            >
+              {f.icon} {f.label}
+            </button>
+          ))}
+        </div>
 
-        {/* Sort */}
         <select
-          className="select"
-          style={{ maxWidth: 220, marginLeft: 'auto' }}
+          className="select filters-sort"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
@@ -134,92 +131,124 @@ export default function AdminDashboardPage() {
             <div className="empty-state-text">Водіїв не знайдено</div>
           </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Водій</th>
-                <th>Статус</th>
-                <th>📍 Місто</th>
-                <th>Початок стоянки</th>
-                <th>Планований вихід</th>
-                <th>До виходу</th>
-                <th>Тривалість</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            <div className="driver-cards">
               {drivers.map((d) => (
-                <tr key={d.id}>
-                  {/* Driver name */}
-                  <td>
-                    <div className="driver-name-cell">
-                      {d.firstName} {d.lastName}
+                <article key={d.id} className="driver-card">
+                  <div className="driver-card-top">
+                    <div>
+                      <div className="driver-name-cell">
+                        {d.firstName} {d.lastName}
+                      </div>
+                      <div className="driver-email-cell">{d.phone || d.email || ''}</div>
                     </div>
-                    <div className="driver-email-cell">{d.phone || d.email || ''}</div>
-                  </td>
-
-                  {/* Status */}
-                  <td>
                     <StatusBadge status={d.displayStatus} />
-                  </td>
+                  </div>
 
-                  {/* City */}
-                  <td>
-                    {d.activeRest?.city ? (
-                      <span className="city-badge">📍 {d.activeRest.city}</span>
-                    ) : (
-                      <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>—</span>
-                    )}
-                  </td>
-
-                  {/* Start of parking */}
-                  <td>
-                    {d.activeRest ? (
-                      <div className="date-cell">
-                        <span className="date-main">{formatShort(d.activeRest.startedAt)}</span>
+                  {d.activeRest ? (
+                    <div className="driver-card-meta">
+                      {d.activeRest.city && (
+                        <span className="city-badge">📍 {d.activeRest.city}</span>
+                      )}
+                      <div className="driver-card-row">
+                        <span>Початок</span>
+                        <strong>{formatShort(d.activeRest.startedAt)}</strong>
                       </div>
-                    ) : '—'}
-                  </td>
-
-                  {/* Planned exit */}
-                  <td>
-                    {d.activeRest ? (
-                      <div className="date-cell">
-                        <span className="date-main">{formatShort(d.activeRest.currentPlannedEndAt)}</span>
-                        <span className="date-sub">планований вихід</span>
+                      <div className="driver-card-row">
+                        <span>Вихід</span>
+                        <strong>{formatShort(d.activeRest.currentPlannedEndAt)}</strong>
                       </div>
-                    ) : (
-                      <span style={{ color: 'var(--green)', fontWeight: 700, fontSize: '0.85rem' }}>
-                        Доступний
-                      </span>
-                    )}
-                  </td>
+                      <div className="driver-card-row">
+                        <span>До виходу</span>
+                        <LiveRemaining endAt={d.activeRest.currentPlannedEndAt} />
+                      </div>
+                      {d.activeRest.plannedDurationLabel && (
+                        <div className="driver-card-row">
+                          <span>Тривалість</span>
+                          <strong>{d.activeRest.plannedDurationLabel}</strong>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="driver-card-available">Доступний для роботи</p>
+                  )}
 
-                  {/* Countdown */}
-                  <td>
-                    {d.activeRest ? (
-                      <LiveRemaining endAt={d.activeRest.currentPlannedEndAt} />
-                    ) : '—'}
-                  </td>
-
-                  {/* Duration */}
-                  <td style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
-                    {d.activeRest?.plannedDurationLabel || '—'}
-                  </td>
-
-                  {/* Action */}
-                  <td>
-                    <Link
-                      to={`/admin/drivers/${d.id}`}
-                      className="btn btn-secondary"
-                    >
-                      Профіль →
-                    </Link>
-                  </td>
-                </tr>
+                  <Link to={`/admin/drivers/${d.id}`} className="btn btn-secondary btn-lg">
+                    Профіль →
+                  </Link>
+                </article>
               ))}
-            </tbody>
-          </table>
+            </div>
+
+            <table className="drivers-table">
+              <thead>
+                <tr>
+                  <th>Водій</th>
+                  <th>Статус</th>
+                  <th>📍 Місто</th>
+                  <th>Початок стоянки</th>
+                  <th>Планований вихід</th>
+                  <th>До виходу</th>
+                  <th>Тривалість</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {drivers.map((d) => (
+                  <tr key={d.id}>
+                    <td>
+                      <div className="driver-name-cell">
+                        {d.firstName} {d.lastName}
+                      </div>
+                      <div className="driver-email-cell">{d.phone || d.email || ''}</div>
+                    </td>
+                    <td>
+                      <StatusBadge status={d.displayStatus} />
+                    </td>
+                    <td>
+                      {d.activeRest?.city ? (
+                        <span className="city-badge">📍 {d.activeRest.city}</span>
+                      ) : (
+                        <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>—</span>
+                      )}
+                    </td>
+                    <td>
+                      {d.activeRest ? (
+                        <div className="date-cell">
+                          <span className="date-main">{formatShort(d.activeRest.startedAt)}</span>
+                        </div>
+                      ) : '—'}
+                    </td>
+                    <td>
+                      {d.activeRest ? (
+                        <div className="date-cell">
+                          <span className="date-main">{formatShort(d.activeRest.currentPlannedEndAt)}</span>
+                          <span className="date-sub">планований вихід</span>
+                        </div>
+                      ) : (
+                        <span style={{ color: 'var(--green)', fontWeight: 700, fontSize: '0.85rem' }}>
+                          Доступний
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      {d.activeRest ? (
+                        <LiveRemaining endAt={d.activeRest.currentPlannedEndAt} />
+                      ) : '—'}
+                    </td>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                      {d.activeRest?.plannedDurationLabel || '—'}
+                    </td>
+                    <td>
+                      <Link to={`/admin/drivers/${d.id}`} className="btn btn-secondary">
+                        Профіль →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
     </div>

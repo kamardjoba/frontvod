@@ -8,28 +8,32 @@ export default function AppLayout({ children, variant }) {
   return (
     <div className="app-shell">
       <header className="topbar">
-        {/* Brand */}
-        <div className="topbar-brand">
+        <Link to={variant === 'admin' ? '/admin' : '/driver'} className="topbar-brand">
           <div className="topbar-brand-icon">🚛</div>
-          DriverRest
-        </div>
+          <span className="topbar-brand-text">DriverRest</span>
+        </Link>
 
-        {/* Actions */}
         <div className="topbar-actions">
           {variant === 'driver' && (
-            <Link to="/driver/history" className="btn btn-ghost">
-              📋 Історія
+            <Link to="/driver/history" className="btn btn-ghost topbar-nav-btn">
+              <span aria-hidden>📋</span>
+              <span className="topbar-nav-label">Історія</span>
             </Link>
           )}
           {variant === 'admin' && (
-            <Link to="/admin/drivers/new" className="btn btn-ghost">
-              + Водій
+            <Link to="/admin/drivers/new" className="btn btn-ghost topbar-nav-btn">
+              <span aria-hidden>+</span>
+              <span className="topbar-nav-label">Водій</span>
             </Link>
           )}
           <NotificationsBell />
-          <span className="topbar-user">{user?.firstName} {user?.lastName}</span>
-          <button type="button" className="btn btn-ghost" onClick={logout}>
-            Вийти
+          <span className="topbar-user">
+            <span className="topbar-user-first">{user?.firstName}</span>
+            <span className="topbar-user-last"> {user?.lastName}</span>
+          </span>
+          <button type="button" className="btn btn-ghost topbar-logout" onClick={logout}>
+            <span className="topbar-nav-label">Вийти</span>
+            <span className="topbar-logout-short">Вихід</span>
           </button>
         </div>
       </header>
